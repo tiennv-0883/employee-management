@@ -5,12 +5,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration 
+@Configuration
 public class SecurityConfig {
-  @Bean 
+
+  @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.authorizeHttpRequests(auth -> auth.requestMatchers("/hello", "/employee-code", "/password").permitAll().anyRequest()
-  .authenticated());
+    http
+        .csrf(csrf -> csrf.disable())
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers(
+                "/hello",
+                "/employee-code",
+                "/password",
+                "/api/employees/**")
+            .permitAll()
+            .anyRequest()
+            .authenticated());
     return http.build();
   }
 }
