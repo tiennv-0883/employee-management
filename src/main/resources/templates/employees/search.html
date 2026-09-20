@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>Tìm kiếm nhân viên</title>
+  </head>
+
+  <body>
+    <h1>Tìm kiếm nhân viên</h1>
+
+    <form method="get" action="/employees/search">
+      <label>Tên:</label>
+
+      <input type="text" name="name" />
+
+      <label>Phòng ban:</label>
+
+      <input type="text" name="department" />
+
+      <button type="submit">Tìm kiếm</button>
+    </form>
+
+    <br />
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tên</th>
+          <th>Email</th>
+          <th>Phòng ban</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr th:each="employee : ${employees}">
+          <td th:text="${employee.id}"></td>
+
+          <td th:text="${employee.name}"></td>
+
+          <td th:text="${employee.email}"></td>
+
+          <td th:text="${employee.department.name}"></td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

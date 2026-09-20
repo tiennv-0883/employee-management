@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Danh sách nhân viên</title>
+  </head>
+
+  <body>
+    <h1>Danh sách nhân viên</h1>
+
+    <a href="/employees/add"> Thêm nhân viên </a>
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Tên</th>
+          <th>Email</th>
+          <th>Phòng ban</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr th:each="employee : ${employees}">
+          <td th:text="${employee.id}">1</td>
+
+          <td th:text="${employee.name}">Nguyen Van A</td>
+
+          <td th:text="${employee.email}">a@gmail.com</td>
+
+          <td th:text="${employee.department.name}">IT</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
