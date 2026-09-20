@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Đặt tên logback-spring.xml (không phải logback.xml) để Logback được Spring Boot
+  nạp sau khi Environment sẵn sàng — nhờ đó dùng được thẻ <springProfile>.
+-->
+<configuration>
+
+  <!-- Các giá trị mặc định Spring Boot cung cấp: màu sắc, pattern console... -->
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+  <!-- Ghi ra màn hình console -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} %highlight(%-5level) %cyan(%logger{36}) - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Ghi ra file, tự cắt file mỗi ngày và giữ lại 30 ngày gần nhất -->
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>logs/employee-management.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>logs/employee-management.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Môi trường dev: chỉ cần console cho gọn, mức DEBUG để thấy nhiều thông tin -->
+  <springProfile name="dev">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+    </root>
+    <logger name="employee_management" level="DEBUG"/>
+  </springProfile>
+
+  <!-- Môi trường prod: ghi cả console lẫn file, chỉ giữ log quan trọng -->
+  <springProfile name="prod">
+    <root level="WARN">
+      <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="FILE"/>
+    </root>
+    <logger name="employee_management" level="INFO"/>
+  </springProfile>
+
+</configuration>

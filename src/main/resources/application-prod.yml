@@ -1,0 +1,27 @@
+# Cấu hình cho môi trường production
+# Toàn bộ thông tin kết nối đều lấy từ biến môi trường, không hard-code
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      # validate: chỉ kiểm tra entity có khớp bảng hay không, KHÔNG tự sửa schema.
+      # Tuyệt đối không dùng update trên production vì dễ làm hỏng dữ liệu
+      ddl-auto: validate
+    show-sql: false
+
+  web:
+    error:
+      # Không lộ thông báo lỗi nội bộ ra ngoài
+      include-message: never
+      include-binding-errors: never
+
+logging:
+  level:
+    root: WARN
+    employee_management: INFO
+  file:
+    name: logs/employee-management.log

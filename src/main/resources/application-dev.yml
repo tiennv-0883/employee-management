@@ -1,0 +1,31 @@
+# Cấu hình cho môi trường phát triển (máy local)
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/employee_management
+    username: root
+    # Mật khẩu không đặt ở đây. Lấy từ biến môi trường DB_PASSWORD,
+    # hoặc từ config/application-dev.properties (file này đã gitignore)
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      # Hibernate tự tạo/sửa bảng theo entity — tiện khi đang phát triển
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  web:
+    error:
+      # Trả chi tiết lỗi validate về cho client để dễ debug
+      include-message: always
+      include-binding-errors: always
+
+logging:
+  level:
+    # Log của chính dự án ở mức DEBUG để thấy đầy đủ
+    employee_management: DEBUG
+    # Xem câu SQL và giá trị tham số Hibernate truyền xuống
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE
