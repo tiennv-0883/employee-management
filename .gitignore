@@ -35,3 +35,6 @@ build/
 ### Local config (chua thong tin nhay cam) ###
 config/
 .env
+
+### Log files ###
+logs/

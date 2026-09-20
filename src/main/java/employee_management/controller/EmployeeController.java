@@ -2,6 +2,8 @@ package employee_management.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +28,7 @@ import jakarta.validation.Valid;
 public class EmployeeController {
   private final EmployeeRepository employeeRepository;
   private final DepartmentRepository departmentRepository;
+  private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
   public EmployeeController(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository) {
     this.employeeRepository = employeeRepository;
@@ -53,10 +56,11 @@ public class EmployeeController {
   public ResponseEntity<Employee> createEmployee(
       @Valid @RequestBody Employee employee) {
 
-    if (employee.getDepartment() != null
-        && employee.getDepartment().getId() != null) {
+    Long departmentId = employee.getDepartment() != null
+        ? employee.getDepartment().getId()
+        : null;
 
-      Long departmentId = employee.getDepartment().getId();
+    if (departmentId != null) {
 
       Department department = departmentRepository
           .findById(departmentId)
@@ -69,7 +73,17 @@ public class EmployeeController {
       employee.setDepartment(department);
     }
 
+    logger.info(
+        "Creating employee: name={}, email={}, departmentId={}",
+        employee.getName(),
+        employee.getEmail(),
+        departmentId);
+
     Employee savedEmployee = employeeRepository.save(employee);
+
+    logger.info(
+        "Employee created successfully: id={}",
+        savedEmployee.getId());
 
     return ResponseEntity
         .status(HttpStatus.CREATED)
@@ -81,20 +95,30 @@ public class EmployeeController {
       @PathVariable Long id,
       @RequestBody Employee newEmployee) {
 
+    logger.info("Updating employee: id={}", id);
+
     return employeeRepository.findById(id)
         .map(employee -> applyUpdate(employee, newEmployee))
-        .orElseGet(() -> ResponseEntity.notFound().build());
+        .orElseGet(() -> {
+          logger.warn("Update failed, employee not found: id={}", id);
+          return ResponseEntity.notFound().build();
+        });
   }
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteEmployee(
       @PathVariable Long id) {
 
+    logger.info("Deleting employee: id={}", id);
+
     if (!employeeRepository.existsById(id)) {
+      logger.warn("Delete failed, employee not found: id={}", id);
       return ResponseEntity.notFound().build();
     }
 
     employeeRepository.deleteById(id);
+
+    logger.info("Employee deleted successfully: id={}", id);
 
     return ResponseEntity.noContent().build();
   }
@@ -134,13 +158,24 @@ public class EmployeeController {
 
       // Id phòng ban không tồn tại trong DB
       if (dep == null) {
+        logger.warn(
+            "Update failed, department not found: employeeId={}, departmentId={}",
+            employee.getId(),
+            depId);
         return ResponseEntity.badRequest().build();
       }
 
       employee.setDepartment(dep);
     }
 
-    return ResponseEntity.ok(
-        employeeRepository.save(employee));
+    Employee saved = employeeRepository.save(employee);
+
+    logger.info(
+        "Employee updated successfully: id={}, name={}, email={}",
+        saved.getId(),
+        saved.getName(),
+        saved.getEmail());
+
+    return ResponseEntity.ok(saved);
   }
 }
