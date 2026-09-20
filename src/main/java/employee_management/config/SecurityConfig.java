@@ -18,7 +18,10 @@ public class SecurityConfig {
                 "/employee-code",
                 "/password",
                 "/api/employees/**",
-                "/api/departments/**")
+                "/api/departments/**",
+                // Spring forward sang /error để dựng body lỗi; không mở thì mọi
+                // lỗi 400/404/500 đều bị Security nuốt và biến thành 403
+                "/error")
             .permitAll()
             .anyRequest()
             .authenticated());
