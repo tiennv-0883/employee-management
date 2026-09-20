@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local config (chua thong tin nhay cam) ###
+config/
+.env

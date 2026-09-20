@@ -17,7 +17,8 @@ public class SecurityConfig {
                 "/hello",
                 "/employee-code",
                 "/password",
-                "/api/employees/**")
+                "/api/employees/**",
+                "/api/departments/**")
             .permitAll()
             .anyRequest()
             .authenticated());
