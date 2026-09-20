@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import employee_management.entity.Department;
 import employee_management.entity.Employee;
+import employee_management.exception.EmployeeNotFoundException;
 import employee_management.repository.DepartmentRepository;
 import employee_management.repository.EmployeeRepository;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -40,15 +42,16 @@ public class EmployeeController {
   public ResponseEntity<Employee> getEmployeeById(
       @PathVariable Long id) {
 
-    return employeeRepository.findById(id)
-        .map(ResponseEntity::ok)
-        .orElseGet(
-            () -> ResponseEntity.notFound().build());
+    Employee employee = employeeRepository
+        .findById(id)
+        .orElseThrow(() -> new EmployeeNotFoundException(id));
+
+    return ResponseEntity.ok(employee);
   }
 
   @PostMapping
   public ResponseEntity<Employee> createEmployee(
-      @RequestBody Employee employee) {
+      @Valid @RequestBody Employee employee) {
 
     if (employee.getDepartment() != null
         && employee.getDepartment().getId() != null) {
