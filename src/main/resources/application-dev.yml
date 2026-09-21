@@ -29,3 +29,8 @@ logging:
     # Xem câu SQL và giá trị tham số Hibernate truyền xuống
     org.hibernate.SQL: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
