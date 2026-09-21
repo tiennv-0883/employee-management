@@ -19,6 +19,7 @@ public class SecurityConfig {
                 "/password",
                 "/api/employees/**",
                 "/api/departments/**",
+                "/api/reports/**",
                 // Các trang giao diện Thymeleaf
                 "/employees/**",
                 // Tài nguyên tĩnh (css, js, ảnh) trong thư mục static
@@ -27,6 +28,7 @@ public class SecurityConfig {
                 "/images/**",
                 // Spring forward sang /error để dựng body lỗi; không mở thì mọi
                 // lỗi 400/404/500 đều bị Security nuốt và biến thành 403
+                "/actuator/**",
                 "/error")
             .permitAll()
             .anyRequest()
