@@ -41,4 +41,17 @@ public class GlobalExceptionHandler {
         .status(HttpStatus.NOT_FOUND)
         .body(error);
   }
+
+  @ExceptionHandler(UsernameAlreadyExistsException.class)
+  public ResponseEntity<Map<String, String>> handleUsernameAlreadyExists(
+      UsernameAlreadyExistsException ex) {
+
+    Map<String, String> error = new HashMap<>();
+
+    error.put("message", ex.getMessage());
+
+    return ResponseEntity
+        .status(HttpStatus.CONFLICT)
+        .body(error);
+  }
 }
