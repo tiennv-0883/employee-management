@@ -2,9 +2,15 @@ package employee_management.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import employee_management.dto.LoginRequest;
+import employee_management.dto.LoginResponse;
 import employee_management.dto.RegisterRequest;
 import employee_management.entity.Role;
 import employee_management.entity.User;
@@ -18,13 +24,19 @@ public class AuthService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final AuthenticationManager authenticationManager;
+  private final JwtService jwtService;
 
   public AuthService(
       UserRepository userRepository,
-      PasswordEncoder passwordEncoder) {
+      PasswordEncoder passwordEncoder,
+      AuthenticationManager authenticationManager,
+      JwtService jwtService) {
 
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.authenticationManager = authenticationManager;
+    this.jwtService = jwtService;
   }
 
   public User register(RegisterRequest request) {
@@ -46,5 +58,33 @@ public class AuthService {
     logger.info("User registered: username={}, role={}", saved.getUsername(), saved.getRole());
 
     return saved;
+  }
+
+  public LoginResponse login(LoginRequest request) {
+
+    Authentication authentication = authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(
+            request.username(),
+            request.password()));
+
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+    String token = jwtService.generateToken(userDetails);
+
+    String role = userDetails.getAuthorities()
+        .stream()
+        .map(authority -> authority.getAuthority())
+        .filter(authority -> authority.startsWith("ROLE_"))
+        .findFirst()
+        .orElse("ROLE_USER");
+
+    logger.info("User logged in: username={}", userDetails.getUsername());
+
+    return new LoginResponse(
+        token,
+        "Bearer",
+        jwtService.getExpirationMs(),
+        userDetails.getUsername(),
+        role);
   }
 }

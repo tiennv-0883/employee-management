@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import employee_management.dto.LoginRequest;
+import employee_management.dto.LoginResponse;
 import employee_management.dto.RegisterRequest;
 import employee_management.entity.User;
 import employee_management.service.AuthService;
@@ -36,6 +38,14 @@ public class AuthController {
     return ResponseEntity
         .status(HttpStatus.CREATED)
         .body(created);
+  }
+
+  @PostMapping("/login")
+  public ResponseEntity<LoginResponse> login(
+      @Valid @RequestBody LoginRequest request) {
+
+    return ResponseEntity.ok(
+        authService.login(request));
   }
 
   @GetMapping("/me")
