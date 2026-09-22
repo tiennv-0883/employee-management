@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Thống kê nhân viên</title>
+  </head>
+
+  <body>
+    <h1>Thống kê nhân viên</h1>
+
+    <a href="/employees/list"> Danh sách nhân viên </a>
+
+    <h2>Tổng quan</h2>
+
+    <table border="1">
+      <tbody>
+        <tr>
+          <th>Tổng số nhân viên</th>
+          <td th:text="${statistics.totalEmployees}">0</td>
+        </tr>
+
+        <tr>
+          <th>Tổng số phòng ban</th>
+          <td th:text="${statistics.totalDepartments}">0</td>
+        </tr>
+
+        <tr>
+          <th>Nhân viên chưa có phòng ban</th>
+          <td th:text="${statistics.employeesWithoutDepartment}">0</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Số nhân viên theo phòng ban</h2>
+
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Phòng ban</th>
+          <th>Số nhân viên</th>
+          <th>Tỷ lệ</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr th:each="row : ${statistics.byDepartment}">
+          <td th:text="${row.departmentName}">IT</td>
+
+          <td th:text="${row.employeeCount}">0</td>
+
+          <!-- Biểu thức Thymeleaf phải nằm gọn trên một dòng.
+               Điều kiện == 0 để tránh chia cho 0 khi chưa có nhân viên nào. -->
+          <td
+            th:text="${statistics.totalEmployees == 0 ? '0%' : #numbers.formatDecimal(row.employeeCount * 100.0 / statistics.totalEmployees, 1, 1) + '%'}"
+          >
+            0%
+          </td>
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(statistics.byDepartment)}">
+          <td colspan="3">Chưa có phòng ban nào</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

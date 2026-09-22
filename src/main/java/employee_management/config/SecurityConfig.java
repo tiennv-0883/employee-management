@@ -24,6 +24,7 @@ public class SecurityConfig {
                 "/password",
                 "/api/departments/**",
                 "/api/reports/**",
+                "/api/statistics/**",
                 // Các trang giao diện Thymeleaf
                 "/employees/**",
                 // Tài nguyên tĩnh (css, js, ảnh) trong thư mục static

@@ -22,6 +22,10 @@ spring:
       include-message: always
       include-binding-errors: always
 
+  thymeleaf:
+    # Tắt cache template để sửa file .html là thấy ngay, không cần restart
+    cache: false
+
 logging:
   level:
     # Log của chính dự án ở mức DEBUG để thấy đầy đủ
